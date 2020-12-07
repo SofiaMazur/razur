@@ -1,4 +1,4 @@
-Шаблон для 2-гої роботи з архітектури ПЗ
+!!!
 ---
 
-Використайте кнопку **"Use this template"**, щоб створити власний репозиторій.
+https://github.com/SofiaMazur/razur_lab_2/actions/runs/320434104
