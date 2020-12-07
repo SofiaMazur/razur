@@ -3,25 +3,46 @@ package main
 import (
 	"flag"
 	"fmt"
-	lab2 "github.com/roman-mazur/architecture-lab-2"
+	"io"
+	"os"
+	"strings"
+	lab2 "github.com/SofiaMazur/razur_lab_2"
 )
 
-var (
+func getFlagsValues() (inputExpression, inputFilename, outputFilename *string) {
+	defer flag.Parse()
+	// -e key used to enter expression through the command line
 	inputExpression = flag.String("e", "", "Expression to compute")
-	// TODO: Add other flags support for input and output configuration.
-)
+	// -f key used to enter expression through the file
+	// -e and -f can not be combined!
+	inputFilename = flag.String("f", "", "input file")
+	// -o key used to output the result to the file mentioned
+	outputFilename = flag.String("o", "", "output file")
+	return
+}
 
 func main() {
-	flag.Parse()
-
-	// TODO: Change this to accept input from the command line arguments as described in the task and
-	//       output the results using the ComputeHandler instance.
-	//       handler := &lab2.ComputeHandler{
-	//           Input: {construct io.Reader according the command line parameters},
-	//           Output: {construct io.Writer according the command line parameters},
-	//       }
-	//       err := handler.Compute()
-
-	res, _ := lab2.PrefixToPostfix("+ 2 2")
-	fmt.Println(res)
+	var inputExpression, inputFilename, outputFilename *string = getFlagsValues()
+	// If both filename and expression are full-filled
+	if *inputFilename != "" && *inputExpression != "" {
+		err := fmt.Errorf("only one source of expression needed")
+		panic(err)
+	}
+	var input io.Reader
+	var output io.Writer
+	if *inputExpression != "" {
+		input = strings.NewReader(*inputExpression)
+	} else if *inputFilename != "" {
+		input, _ = os.Open(*inputFilename)
+	}
+	if *outputFilename != "" {
+		output, _ = os.Create(*outputFilename)
+	} else {
+		output = os.Stdout
+	}
+	handler := lab2.ComputeHandler{Input: input, Output: output}
+	err := handler.Compute()
+	if err != nil {
+		panic(err)
+	}
 }
